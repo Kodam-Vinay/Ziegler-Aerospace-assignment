@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/admin", getAllUsers);
+router.post("/all-users", getAllUsers);
 router.delete("/delete-user", deleteUser);
 
 module.exports = {
