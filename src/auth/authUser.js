@@ -84,6 +84,7 @@ const registerUser = async (req, res) => {
       image,
       user_type,
       image,
+      user_id,
     });
   } catch (error) {
     res.status(400).send({ message: "Something error is Happend" });
@@ -146,9 +147,10 @@ const loginUser = async (req, res) => {
         const jwtToken = generateToken({ userDetails });
         res.status(200).send({
           name: userExistsWithEmail?.name,
-          user_type: userExistsWithEmail.user_type,
-          image: userExistsWithEmail.image,
+          user_type: userExistsWithEmail?.user_type,
+          image: userExistsWithEmail?.image,
           jwtToken,
+          user_id: userExistsWithEmail?.user_id,
         });
       }
     }
