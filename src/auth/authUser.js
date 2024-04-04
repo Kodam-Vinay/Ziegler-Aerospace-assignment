@@ -121,6 +121,7 @@ const loginUser = async (req, res) => {
           user_type: userExistsWithId.user_type,
           image: userExistsWithId.image,
           jwtToken,
+          user_id: email,
         });
       }
     } else {
