@@ -13,6 +13,7 @@ const retrieveAllUsers = async (req, res, id) => {
         user_id: each?.user_id,
         user_type: each?.user_type,
         name: each?.name,
+        image: each?.image,
       };
     });
 
