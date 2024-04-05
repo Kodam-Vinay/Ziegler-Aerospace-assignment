@@ -98,8 +98,13 @@ const deleteUser = async (req, res) => {
             .status(401)
             .send({ message: "You Didn't have permission to access" });
         } else {
-          await UserModel.findOneAndDelete({ user_id: user_id });
-          res.status(200).send({ message: "User Deleted Successfully" });
+          const data = await UserModel.findOneAndDelete({ user_id: user_id });
+          res
+            .status(200)
+            .send({
+              user_id: data?.user_id,
+              message: "User Deleted Successfully",
+            });
         }
       });
     } else if (jwtToken && user_type !== "admin") {
