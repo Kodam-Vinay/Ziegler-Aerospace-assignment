@@ -1,4 +1,4 @@
-const { UserModel } = require("../../db/model/model");
+const { UserModel } = require("../../db/model/userModel");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
@@ -99,12 +99,10 @@ const deleteUser = async (req, res) => {
             .send({ message: "You Didn't have permission to access" });
         } else {
           const data = await UserModel.findOneAndDelete({ user_id: user_id });
-          res
-            .status(200)
-            .send({
-              user_id: data?.user_id,
-              message: "User Deleted Successfully",
-            });
+          res.status(200).send({
+            user_id: data?.user_id,
+            message: "User Deleted Successfully",
+          });
         }
       });
     } else if (jwtToken && user_type !== "admin") {
