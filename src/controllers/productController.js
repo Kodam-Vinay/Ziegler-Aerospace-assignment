@@ -81,7 +81,7 @@ const addProduct = async (req, res) => {
   }
 };
 
-const retrieveAllProducts = async (req, res, Id) => {
+const retrieveAllProducts = async (req, res) => {
   try {
     const allProducts = await ProductModel.find();
     if (allProducts?.length > 0) {
@@ -258,7 +258,7 @@ const deleteProduct = async (req, res) => {
         } else {
           const data = await ProductModel.findOneAndDelete({ product_id });
           res.status(200).send({
-            user_id: data?.user_id,
+            product_id: data?.product_id,
             message: "Product Deleted Successfully",
           });
         }
