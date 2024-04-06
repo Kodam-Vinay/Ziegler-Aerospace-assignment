@@ -1,4 +1,5 @@
 const validator = require("validator");
+const os = require("os");
 const bcrypt = require("bcrypt");
 const { UserModel } = require("../../db/model/userModel");
 const { generateToken } = require("../../utils/constants");
@@ -160,7 +161,25 @@ const loginUser = async (req, res) => {
   }
 };
 
+const serveradderss = async (req, res) => {
+  const ifaces = os.networkInterfaces();
+  let ipAddress = "";
+
+  Object.keys(ifaces).forEach((ifname) => {
+    ifaces[ifname].forEach((iface) => {
+      if ("IPv4" === iface.family && !iface.internal) {
+        ipAddress = iface.address;
+      }
+    });
+  });
+
+  return res.send({
+    api: ipAddress,
+  });
+};
+
 module.exports = {
   registerUser,
   loginUser,
+  serveradderss,
 };
