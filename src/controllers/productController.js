@@ -162,7 +162,8 @@ const updateProduct = async (req, res) => {
       !product_price ||
       !rating ||
       !category ||
-      !specifications
+      !specifications ||
+      !product_id
     ) {
       return res.status(400).send({ message: "Fields Must Not Be Empty" });
     }
