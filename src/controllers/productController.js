@@ -8,10 +8,12 @@ const authorize = (req, res, next) => {
   const authHeader = req.headers["authorization"];
   if (authHeader) {
     const jwtToken = authHeader.split(" ")[1];
-    jwt.verify(jwtToken, process.env.JWT_SECRET_KEY, (err, decoded) => {
+    jwt.verify(jwtToken, process.env.JWT_SECRET_KEY, async (err, decoded) => {
       if (err) {
         return res.status(401).send({ message: "Unauthorized" });
       }
+      console.log("decoded", decoded);
+      // const checkUserExist = await UserModel.findOne({ user_id: user_id });
       req.user = decoded;
       next();
     });
@@ -22,8 +24,8 @@ const authorize = (req, res, next) => {
 
 const addProduct = async (req, res) => {
   try {
+    const { user_id } = req?.user?.userDetails;
     const {
-      user_id,
       product_name,
       product_image,
       product_price,
@@ -33,7 +35,6 @@ const addProduct = async (req, res) => {
     } = req.body;
 
     if (
-      !user_id ||
       !product_name ||
       !product_price ||
       !rating ||
@@ -81,7 +82,7 @@ const retrieveAllProducts = async (req, res) => {
   try {
     const allProducts = await ProductModel.find();
     if (allProducts?.length > 0) {
-      return res.status(200).send(allProducts);
+      return allProducts;
     }
   } catch (error) {
     res.status(400).send({ message: "Something error occurred" });
@@ -90,10 +91,14 @@ const retrieveAllProducts = async (req, res) => {
 
 const retrieveAllProductsbyUserId = async (req, res) => {
   try {
-    const { user_id } = req.body;
+    const { user_id } = req?.user?.userDetails;
+    console.log("user_id", user_id);
     const allProducts = await ProductModel.find({ seller_id: user_id });
     if (allProducts?.length > 0) {
-      return res.status(200).send(allProducts);
+      // return res.status(200).send(allProducts);
+      return allProducts;
+    } else {
+      return [];
     }
   } catch (error) {
     res.status(400).send({ message: "Something error occurred" });
@@ -102,20 +107,22 @@ const retrieveAllProductsbyUserId = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const { user_id } = req.body;
-
-    const checkUserExist = await UserModel.findOne({ user_id });
-
-    if (!checkUserExist || checkUserExist.user_type !== "seller") {
-      return res
-        .status(401)
-        .send({ message: "This Access is Limited to Sellers only" });
+    const { user_id } = req?.user?.userDetails;
+    const checkUserExist = await UserModel.findOne({ user_id: user_id });
+    // console.log("checkUserExit", checkUserExist);
+    if (checkUserExist) {
+      if (checkUserExist.user_type === "seller") {
+        const data = await retrieveAllProductsbyUserId(req, res);
+        return res.status(200).send(data);
+      } else {
+        const data = await retrieveAllProducts(req, res);
+        return res.status(200).send(data);
+      }
+    } else {
+      return res.status(400).send({ message: "No User found" });
     }
-
-    const data = await retrieveAllProducts(req, res);
-    res.status(200).send(data);
   } catch (error) {
-    res.status(400).send({ message: "Something error occurred" });
+    return res.status(400).send({ message: "Something error occurred" });
   }
 };
 

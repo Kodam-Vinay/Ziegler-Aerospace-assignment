@@ -31,6 +31,10 @@ const productSchema = mongoose.Schema({
     type: Array,
     required: true,
   },
+  seller_id: {
+    type: String,
+    required: true,
+  },
 });
 const ProductModel = new mongoose.model("Product", productSchema);
 module.exports = {

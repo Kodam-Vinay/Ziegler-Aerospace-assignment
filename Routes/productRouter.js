@@ -10,7 +10,7 @@ const {
 const router = express.Router();
 
 router.post("/add-product", authorize, addProduct);
-router.post("/all-products", authorize, getAllProducts);
+router.get("/all-products", authorize, getAllProducts);
 router.post("/seller-products", authorize, retrieveAllProductsbyUserId);
 
 router.delete("/delete-product", authorize, deleteProduct);
