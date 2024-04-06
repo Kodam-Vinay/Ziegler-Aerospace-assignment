@@ -128,9 +128,10 @@ const getAllProducts = async (req, res) => {
 
 const updateProduct = async (req, res) => {
   try {
+    const { user_id } = req?.user?.userDetails;
+    const { product_id } = req.params;
+
     const {
-      product_id,
-      user_id,
       product_name,
       product_image,
       product_price,
@@ -192,7 +193,8 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   try {
-    const { user_id, product_id } = req.body;
+    const { user_id } = req?.user?.userDetails;
+    const { product_id } = req.params;
 
     if (!user_id || !product_id)
       return res
