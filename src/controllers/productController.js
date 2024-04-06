@@ -55,8 +55,8 @@ const addProduct = async (req, res) => {
       category,
       specifications,
     });
-
     if (jwtToken && findUser?.user_type === "seller") {
+      console.log("hello");
       jwt.verify(jwtToken, process.env.JWT_SECRET_KEY, async (err, user) => {
         if (err) {
           res
@@ -76,10 +76,6 @@ const addProduct = async (req, res) => {
     } else {
       res.status(401).send({ message: "You Didn't have permission to access" });
     }
-    const productDetails = await newProduct.save();
-    res
-      .status(201)
-      .send({ message: "product Added Successfully", productDetails });
   } catch (error) {
     res.status(400).send({ message: "Something error is Happend" });
   }
