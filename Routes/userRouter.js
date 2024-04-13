@@ -14,7 +14,7 @@ router.get("/info", serveradderss);
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/all-users", authorize, getAllUsers);
+router.post("/all-users", getAllUsers);
 router.delete("/delete-user", authorize, deleteUser);
 
 module.exports = {
