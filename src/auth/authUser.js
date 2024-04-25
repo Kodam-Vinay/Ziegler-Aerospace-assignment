@@ -181,11 +181,17 @@ const updateUser = async (req, res) => {
         .send({ message: "This Access is Limited to Buyers" });
     }
 
-    const update = { is_premium_user: true };
-    const updatedUser = await UserModel.updateOne(
+    const updateDoc = {
+      $set: {
+        is_premium_user: true,
+      },
+    };
+    const updatedUser = await UserModel.findOneAndUpdate(
       { user_id },
-      { $set: update },
-      { new: true }
+      updateDoc,
+      {
+        new: true,
+      }
     );
 
     if (!updatedUser) {
