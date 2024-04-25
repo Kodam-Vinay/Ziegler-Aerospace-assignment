@@ -182,9 +182,11 @@ const updateUser = async (req, res) => {
     }
 
     const update = { is_premium_user: true };
-    const updatedUser = await UserModel.findOneAndUpdate({ user_id }, update, {
-      new: true,
-    });
+    const updatedUser = await UserModel.updateOne(
+      { user_id },
+      { $set: update },
+      { new: true }
+    );
 
     if (!updatedUser) {
       return res.status(400).send({ message: "Failed to update user" });
