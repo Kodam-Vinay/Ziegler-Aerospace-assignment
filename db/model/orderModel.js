@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const productSchema = new mongoose.Schema(
+const orderSchema = new mongoose.Schema(
   {
     product_id: {
       type: String,
@@ -13,7 +13,6 @@ const productSchema = new mongoose.Schema(
     product_image: {
       type: String,
       required: true,
-      default: "NO-PRODUCT-IMAGE",
     },
     product_price: {
       type: Number,
@@ -35,17 +34,20 @@ const productSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    is_premium_product: {
-      type: Boolean,
+    buyer_id: {
+      type: String,
       required: true,
-      default: false,
+    },
+    ordered_count: {
+      type: Number,
+      required: true,
     },
   },
   {
     timestamps: true,
   }
 );
-const ProductModel = mongoose.model("Product", productSchema);
+const OrderModel = mongoose.model("Order", orderSchema);
 module.exports = {
-  ProductModel,
+  OrderModel,
 };

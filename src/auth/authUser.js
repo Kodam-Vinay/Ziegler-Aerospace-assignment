@@ -71,6 +71,7 @@ const registerUser = async (req, res) => {
       password: hashedPassword,
       image,
       user_type,
+      is_premium_user: false,
     });
     await user.save();
 
@@ -86,6 +87,7 @@ const registerUser = async (req, res) => {
       user_type,
       image,
       user_id,
+      is_premium_user: false,
     });
   } catch (error) {
     res.status(400).send({ message: "Something error is Happend" });
@@ -123,6 +125,7 @@ const loginUser = async (req, res) => {
           image: userExistsWithId.image,
           jwtToken,
           user_id: email,
+          is_premium_user: userExistsWithId?.is_premium_user,
         });
       }
     } else {
@@ -153,6 +156,7 @@ const loginUser = async (req, res) => {
           image: userExistsWithEmail?.image,
           jwtToken,
           user_id: userExistsWithEmail?.user_id,
+          is_premium_user: userExistsWithEmail?.is_premium_user,
         });
       }
     }
@@ -161,25 +165,47 @@ const loginUser = async (req, res) => {
   }
 };
 
-const serveradderss = async (req, res) => {
-  const ifaces = os.networkInterfaces();
-  let ipAddress = "";
+const updateUser = async (req, res) => {
+  try {
+    const { user_id } = req.user.userDetails;
+    const findUser = await UserModel.findOne({ user_id });
+    if (!findUser) {
+      return res.status(400).send({ message: "User ID Not Exist" });
+    }
+    if (findUser?.premium_user) {
+      return res.status(400).send({ message: "Your Already a Premium User" });
+    }
+    if (findUser?.user_type !== "buyer") {
+      return res
+        .status(400)
+        .send({ message: "This Access is Limited to Buyers" });
+    }
 
-  Object.keys(ifaces).forEach((ifname) => {
-    ifaces[ifname].forEach((iface) => {
-      if ("IPv4" === iface.family && !iface.internal) {
-        ipAddress = iface.address;
+    const updateDoc = {
+      $set: {
+        is_premium_user: true,
+      },
+    };
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { user_id },
+      updateDoc,
+      {
+        new: true,
       }
-    });
-  });
+    );
 
-  return res.send({
-    api: ipAddress,
-  });
+    if (!updatedUser) {
+      return res.status(400).send({ message: "Failed to update user" });
+    }
+
+    res.status(200).send({ message: "Premium subscription Successful" });
+  } catch (error) {
+    res.status(400).send({ message: "Something error is Happend" });
+  }
 };
 
 module.exports = {
   registerUser,
   loginUser,
-  serveradderss,
+  updateUser,
 };

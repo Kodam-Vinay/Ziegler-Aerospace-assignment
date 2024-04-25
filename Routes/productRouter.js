@@ -4,9 +4,9 @@ const {
   getAllProducts,
   deleteProduct,
   updateProduct,
-  authorize,
   retrieveAllProductsbyUserId,
 } = require("../src/controllers/productController");
+const { authorize } = require("../utils/constants");
 const router = express.Router();
 
 router.post("/add-product", authorize, addProduct);

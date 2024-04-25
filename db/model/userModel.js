@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema(
   {
     user_id: {
       type: String,
@@ -32,13 +32,18 @@ const userSchema = mongoose.Schema(
       type: String,
       default: "DUMMY_PROFILE_LOGO.png",
     },
+    is_premium_user: {
+      type: Boolean,
+      required: true,
+      default: false,
+    },
   },
   {
     timestamps: true,
   }
 );
 
-const UserModel = new mongoose.model("User", userSchema);
+const UserModel = mongoose.model("User", userSchema);
 module.exports = {
   UserModel,
 };

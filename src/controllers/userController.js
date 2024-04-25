@@ -3,23 +3,6 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 dotenv.config();
 
-// Authorization Middleware
-const authorize = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  if (authHeader) {
-    const jwtToken = authHeader.split(" ")[1];
-    jwt.verify(jwtToken, process.env.JWT_SECRET_KEY, (err, decoded) => {
-      if (err) {
-        return res.status(401).send({ message: "Unauthorized" });
-      }
-      req.user = decoded;
-      next();
-    });
-  } else {
-    res.status(401).send({ message: "Unauthorized" });
-  }
-};
-
 const retrieveAllUsers = async (id) => {
   try {
     const allUsersExceptCurrent = await UserModel.find({
@@ -134,5 +117,4 @@ const deleteUser = async (req, res) => {
 module.exports = {
   getAllUsers,
   deleteUser,
-  authorize,
 };

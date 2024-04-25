@@ -4,23 +4,6 @@ const { v4: uniqueId } = require("uuid");
 const jwt = require("jsonwebtoken");
 
 // Authorization Middleware
-const authorize = (req, res, next) => {
-  const authHeader = req.headers["authorization"];
-  if (authHeader) {
-    const jwtToken = authHeader.split(" ")[1];
-    jwt.verify(jwtToken, process.env.JWT_SECRET_KEY, async (err, decoded) => {
-      if (err) {
-        return res.status(401).send({ message: "Unauthorized" });
-      }
-      console.log("decoded", decoded);
-      // const checkUserExist = await UserModel.findOne({ user_id: user_id });
-      req.user = decoded;
-      next();
-    });
-  } else {
-    res.status(401).send({ message: "Unauthorized" });
-  }
-};
 
 const addProduct = async (req, res) => {
   try {
@@ -32,8 +15,8 @@ const addProduct = async (req, res) => {
       rating,
       category,
       specifications,
+      is_premium_product,
     } = req.body;
-
     if (
       !product_name ||
       !product_price ||
@@ -61,15 +44,17 @@ const addProduct = async (req, res) => {
     const newProduct = new ProductModel({
       product_id: uniqueId(),
       product_name,
-      product_image,
+      product_image: product_image ? product_image : "NO-PRODUCT-IMAGE",
       product_price,
       rating,
       category,
       specifications,
       seller_id: user_id,
+      is_premium_product,
     });
 
     const productDetails = await newProduct.save();
+
     res
       .status(201)
       .send({ message: "Product Added Successfully", productDetails });
@@ -92,7 +77,6 @@ const retrieveAllProducts = async (req, res) => {
 const retrieveAllProductsbyUserId = async (req, res) => {
   try {
     const { user_id } = req?.user?.userDetails;
-    console.log("user_id", user_id);
     const allProducts = await ProductModel.find({ seller_id: user_id });
     if (allProducts?.length > 0) {
       // return res.status(200).send(allProducts);
@@ -109,7 +93,6 @@ const getAllProducts = async (req, res) => {
   try {
     const { user_id } = req?.user?.userDetails;
     const checkUserExist = await UserModel.findOne({ user_id: user_id });
-    // console.log("checkUserExit", checkUserExist);
     if (checkUserExist) {
       if (checkUserExist.user_type === "seller") {
         const data = await retrieveAllProductsbyUserId(req, res);
@@ -235,5 +218,4 @@ module.exports = {
   deleteProduct,
   updateProduct,
   retrieveAllProductsbyUserId,
-  authorize,
 };
