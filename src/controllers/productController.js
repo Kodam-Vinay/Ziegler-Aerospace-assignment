@@ -121,6 +121,7 @@ const updateProduct = async (req, res) => {
       rating,
       category,
       specifications,
+      is_premium_product,
     } = req.body;
 
     if (
@@ -160,6 +161,7 @@ const updateProduct = async (req, res) => {
       rating: rating,
       category: category,
       specifications: specifications,
+      is_premium_product,
     };
 
     await ProductModel.updateOne(
